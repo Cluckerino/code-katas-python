@@ -6,4 +6,7 @@ The div by 5 regex can be represented by the following finite state machine:
 http://aswitalski.github.io/img/FSM-binary-divisible-by-five.png
 """
 
-PATTERN = r'^.*$'
+# After reducing the graph, my unoptimized result:
+# 0+1[{10+(0+11)(01*01)*01*00}*(0+11)(01*01)*1]
+
+PATTERN = r'(0|1((10|(0|11)(01*01)*01*00)*(0|11)(01*01)*)1)+$'
