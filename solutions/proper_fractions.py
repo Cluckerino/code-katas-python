@@ -59,7 +59,7 @@ def get_unique_prime_factors(num):
     return found_primes
 
 
-def proper_fractions(denom):
+def proper_fractions_brute_force(denom):
     """Count the number of reduced fractions with denominator denom."""
     print("Checking {}".format(denom))
     tally = denom - 1
@@ -82,3 +82,49 @@ def proper_fractions(denom):
         sign = sign * -1
 
     return tally
+
+
+def proper_fractions_totient(num):
+    """Calculate using the Euler totient function."""
+    # Totient function description:
+    # https://en.wikipedia.org/wiki/Euler%27s_totient_function
+    # Method proof:
+    # Totient function is defined as follows:
+    # phi(n) = n * Pi(1 - 1/p) for prime numbers where p | n
+    # Start with
+    #  phi_0 = n
+    # Let p_k be the kth prime number with p_k | n
+    # Define phi_k = phi_k-1 - phi_k-1 / p_k
+    #  phi_k = phi_k-1 * (1 - 1 / p_k)
+    #  phi_1 = phi_0 * (1 - 1 / p_1) = n * (1 - 1 / p_1)
+    #  phi_2 = phi_1 * (1 - 1 / p_2) = n * (1 - 1 / p_1) * (1 - 1 / p_2)
+    # Etc.
+    # To iterate through unique prime factors:
+    # Start with leftover = n
+    # Iterate through p = 2..sqrt(n)
+    #   if p | leftover:
+    #     p is prime
+    #     Repeat leftover = leftover / p until not p | leftover
+    #     leftover should now be just factors of the remaining primes.
+    # Since p only iterates through primes < sqrt(n):
+    #   if leftover > 1
+    #     leftover is a also a prime (> sqrt(n))
+    if num == 1:
+        return 0
+    phi = num
+    leftover = num
+    p = 2
+    while p * p <= num:
+        if not leftover % p:
+            phi -= phi // p
+            while not leftover % p:
+                leftover //= p
+        p += 1
+    # This step is to capture the last prime if it's > sqrt(n).
+    if leftover > 1:
+        phi -= phi // leftover
+    return phi
+
+
+# Use the totient methood cuz it's cool
+proper_fractions = proper_fractions_totient
